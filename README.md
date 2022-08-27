@@ -1,4 +1,4 @@
-# [Light Gym](https://light-gym.netlify.app/) <img src="./Light-gym.png" alt="Light Gym logo">
+# [Light Gym](https://light-gym.netlify.app/) <img src="./logo192.png" alt="Light Gym logo" width=50>
 <br>
 Website where one can browse exercises by different categories, with search functionality as well <br>
 Can click on any exercise and visit the details page for that exercise, and can watch youtube videos there on how to properly perform the exercise <br>
