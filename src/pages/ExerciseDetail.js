@@ -34,13 +34,29 @@ const ExerciseDetail = () => {
 			);
 			// console.log(exerciseVideosData.contents)
 			setExerciseVideos(exerciseVideosData.contents);
+
+			const targetMuscleExercisesData = await fetchData(
+				`${exerciseDbUrl}/exercises/target/${exerciseDetailData.target}`,
+				exerciseOptions
+			);
+			setTargetMuscleExercises(targetMuscleExercisesData);
+
+			const equipmentExercisesData = await fetchData(
+				`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`,
+				exerciseOptions
+			);
+			setEquipmentExercises(equipmentExercisesData);
 		};
 
 		//call the above defined fn
 		fetchExercisesData();
+
+		//scroll to the top
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}, [id]);
 
 	return (
+		
 		<Box sx={{ mt: { lg: '96px', xs: '60px' } }}>
 			<Detail exerciseDetail={exerciseDetail} />
 			<ExerciseVideos

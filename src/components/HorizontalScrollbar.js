@@ -4,6 +4,8 @@ import { Box, Typography } from '@mui/material';
 
 // import ExerciseCard from './ExerciseCard';
 import BodyPart from './BodyPart';
+import ExerciseCard from './ExerciseCard';
+
 import RightArrowIcon from '../assets/icons/right-arrow.png';
 import LeftArrowIcon from '../assets/icons/left-arrow.png';
 
@@ -28,6 +30,7 @@ const RightArrow = () => {
 	);
 };
 
+//this is bodyPart with small b, we have imported BodyPart comp here as well
 const HorizontalScrollbar = ({ data, bodyParts, setBodyPart, bodyPart }) => (
 	<ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
 		{data.map((item) => (
@@ -44,8 +47,7 @@ const HorizontalScrollbar = ({ data, bodyParts, setBodyPart, bodyPart }) => (
 						bodyPart={bodyPart}
 					/>
 				) : (
-					// <ExerciseCard exercise={item} />
-					null
+					<ExerciseCard exercise={item} />
 				)}
 			</Box>
 		))}
