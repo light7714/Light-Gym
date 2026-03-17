@@ -17,41 +17,45 @@ const ExerciseDetail = () => {
 
 	useEffect(() => {
 		const fetchExercisesData = async () => {
-			const exerciseDbUrl = 'https://exercisedb.p.rapidapi.com';
-			const youtubeSearchUrl =
-				'https://youtube-search-and-download.p.rapidapi.com';
+			try {
+				const exerciseDbUrl = 'https://exercisedb.p.rapidapi.com';
+				const youtubeSearchUrl =
+					'https://youtube-search-and-download.p.rapidapi.com';
 
-			const exerciseDetailData = await fetchData(
-				`${exerciseDbUrl}/exercises/exercise/${id}`,
-				exerciseOptions
-			);
-			setExerciseDetail(exerciseDetailData);
+				const exerciseDetailData = await fetchData(
+					`${exerciseDbUrl}/exercises/exercise/${id}`,
+					exerciseOptions
+				);
+				setExerciseDetail(exerciseDetailData);
 
-			//gives vids only abt a specific exercise name
-			const exerciseVideosData = await fetchData(
-				`${youtubeSearchUrl}/search?query=${exerciseDetailData.name} exercise`,
-				youtubeOptions
-			);
-			// console.log(exerciseVideosData.contents)
-			setExerciseVideos(exerciseVideosData.contents);
+				const exerciseVideosData = await fetchData(
+					`${youtubeSearchUrl}/search?query=${exerciseDetailData.name} exercise`,
+					youtubeOptions
+				);
+				setExerciseVideos(exerciseVideosData.contents || []);
 
-			const targetMuscleExercisesData = await fetchData(
-				`${exerciseDbUrl}/exercises/target/${exerciseDetailData.target}`,
-				exerciseOptions
-			);
-			setTargetMuscleExercises(targetMuscleExercisesData);
+				const targetMuscleExercisesData = await fetchData(
+					`${exerciseDbUrl}/exercises/target/${exerciseDetailData.target}`,
+					exerciseOptions
+				);
+				setTargetMuscleExercises(Array.isArray(targetMuscleExercisesData) ? targetMuscleExercisesData : []);
 
-			const equipmentExercisesData = await fetchData(
-				`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`,
-				exerciseOptions
-			);
-			setEquipmentExercises(equipmentExercisesData);
+				const equipmentExercisesData = await fetchData(
+					`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`,
+					exerciseOptions
+				);
+				setEquipmentExercises(Array.isArray(equipmentExercisesData) ? equipmentExercisesData : []);
+			} catch (error) {
+				console.error('Failed to load exercise details:', error);
+				setExerciseDetail({});
+				setExerciseVideos([]);
+				setTargetMuscleExercises([]);
+				setEquipmentExercises([]);
+			}
 		};
 
-		//call the above defined fn
 		fetchExercisesData();
 
-		//scroll to the top
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}, [id]);
 

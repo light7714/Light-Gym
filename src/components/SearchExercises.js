@@ -10,12 +10,22 @@ const SearchExercises = ({ setExercises, bodyPart, setBodyPart}) => {
 
 	useEffect(() => {
 		const fetchExercisesData = async () => {
-			const bodyPartsData = await fetchData(
-				'https://exercisedb.p.rapidapi.com/exercises/bodyPartList',
-				exerciseOptions
-			);
+			try {
+				const bodyPartsData = await fetchData(
+					'https://exercisedb.p.rapidapi.com/exercises/bodyPartList',
+					exerciseOptions
+				);
 
-			setBodyParts(['all', ...bodyPartsData]);
+				if (Array.isArray(bodyPartsData)) {
+					setBodyParts(['all', ...bodyPartsData]);
+				} else {
+					console.error('Expected bodyParts array but got:', bodyPartsData);
+					setBodyParts(['all']);
+				}
+			} catch (error) {
+				console.error('Failed to load body part list:', error);
+				setBodyParts(['all']);
+			}
 		};
 
 		fetchExercisesData();
@@ -23,24 +33,31 @@ const SearchExercises = ({ setExercises, bodyPart, setBodyPart}) => {
 
 	const handleSearch = async () => {
 		if (search) {
-			const exercisesData = await fetchData(
-				'https://exercisedb.p.rapidapi.com/exercises',
-				exerciseOptions
-			);
+			try {
+				const exercisesData = await fetchData(
+					'https://exercisedb.p.rapidapi.com/exercises',
+					exerciseOptions
+				);
 
-			//gives out 4 fields where we can search for something: name of exercise, target muscles, equipment, and bodyPart
-			// console.log(exercisesData);
+				if (Array.isArray(exercisesData)) {
+					const searchedExercises = exercisesData.filter(
+						(item) =>
+							item.name.toLowerCase().includes(search) ||
+							item.target.toLowerCase().includes(search) ||
+							item.equipment.toLowerCase().includes(search) ||
+							item.bodyPart.toLowerCase().includes(search)
+					);
 
-			const searchedExercises = exercisesData.filter(
-				(item) =>
-					item.name.toLowerCase().includes(search) ||
-					item.target.toLowerCase().includes(search) ||
-					item.equipment.toLowerCase().includes(search) ||
-					item.bodyPart.toLowerCase().includes(search)
-			);
-
+					setExercises(searchedExercises);
+				} else {
+					console.error('Expected exercises array but got:', exercisesData);
+					setExercises([]);
+				}
+			} catch (error) {
+				console.error('Search failed:', error);
+				setExercises([]);
+			}
 			setSearch('');
-			setExercises(searchedExercises);
 		}
 	};
 

@@ -30,21 +30,31 @@ const Exercises = ({ exercises, setExercises, bodyPart }) => {
 	//calling this useEffect whenever the bodyPart changes (so when user selects a body part from the cards in horizontal scrollbar, it should set exercises variable (in home comp) to the exercises corresponding to the bodypart selected)
 	useEffect(() => {
 		const fetchExercisesData = async () => {
-			let exercisesData = [];
+			try {
+				let exercisesData = [];
 
-			if (bodyPart === 'all') {
-				exercisesData = await fetchData(
-					'https://exercisedb.p.rapidapi.com/exercises',
-					exerciseOptions
-				);
-			} else {
-				exercisesData = await fetchData(
-					`https://exercisedb.p.rapidapi.com/exercises/bodyPart/${bodyPart}`,
-					exerciseOptions
-				);
+				if (bodyPart === 'all') {
+					exercisesData = await fetchData(
+						'https://exercisedb.p.rapidapi.com/exercises',
+						exerciseOptions
+					);
+				} else {
+					exercisesData = await fetchData(
+						`https://exercisedb.p.rapidapi.com/exercises/bodyPart/${bodyPart}`,
+						exerciseOptions
+					);
+				}
+
+				if (Array.isArray(exercisesData)) {
+					setExercises(exercisesData);
+				} else {
+					console.error('Expected exercises array but got:', exercisesData);
+					setExercises([]);
+				}
+			} catch (error) {
+				console.error('Failed to load exercises:', error);
+				setExercises([]);
 			}
-
-			setExercises(exercisesData);
 		};
 
 		fetchExercisesData();

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography, Stack, Button } from '@mui/material';
 
 import BodyPartImage from '../assets/icons/body-part.png';
@@ -6,7 +6,49 @@ import TargetImage from '../assets/icons/target.png';
 import EquipmentImage from '../assets/icons/equipment.png';
 
 const Detail = ({ exerciseDetail }) => {
-	const { bodyPart, gifUrl, name, target, equipment } = exerciseDetail;
+	const { bodyPart, name, target, equipment, id } = exerciseDetail;
+	const [imageSrc, setImageSrc] = useState(null);
+
+	useEffect(() => {
+		let isMounted = true;
+		let objectUrl;
+
+		const fetchExerciseImage = async () => {
+			if (!id) {
+				setImageSrc(null);
+				return;
+			}
+
+			try {
+				const response = await fetch(
+					`https://exercisedb.p.rapidapi.com/image?exerciseId=${id}&resolution=360`,
+					{
+						method: 'GET',
+						headers: {
+							'X-RapidAPI-Key': process.env.REACT_APP_RAPID_API_KEY,
+							'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com',
+						},
+					}
+				);
+				if (!response.ok) {
+					throw new Error(`Image fetch failed: ${response.status}`);
+				}
+				const blob = await response.blob();
+				objectUrl = URL.createObjectURL(blob);
+				if (isMounted) setImageSrc(objectUrl);
+			} catch (error) {
+				console.error('Failed to load detail image:', error);
+				if (isMounted) setImageSrc(null);
+			}
+		};
+
+		fetchExerciseImage();
+
+		return () => {
+			isMounted = false;
+			if (objectUrl) URL.revokeObjectURL(objectUrl);
+		};
+	}, [id]);
 
 	const extraDetail = [
 		{
@@ -33,12 +75,18 @@ const Detail = ({ exerciseDetail }) => {
 				alignItems: 'center',
 			}}
 		>
-			<img
-				src={gifUrl}
-				alt={name}
-				loading="lazy"
-				className="detail-image"
-			/>
+			{imageSrc ? (
+				<img
+					src={imageSrc}
+					alt={name}
+					loading="lazy"
+					className="detail-image"
+				/>
+			) : (
+				<div className="detail-image" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f3f3f3' }}>
+					No image available
+				</div>
+			)}
 			<Stack sx={{ gap: { lg: '35px', xs: '20px' } }}>
 				<Typography
 					sx={{ fontSize: { lg: '64px', xs: '30px' } }}

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Stack } from '@mui/material';
-import { InfinitySpin } from 'react-loader-spinner';
+import { Stack, CircularProgress } from '@mui/material';
 
 const Loader = () => (
 	<Stack
@@ -9,7 +8,7 @@ const Loader = () => (
 		alignItems="center"
 		width="100%"
 	>
-		<InfinitySpin color="grey" />
+		<CircularProgress color="inherit" />
 	</Stack>
 );
 
